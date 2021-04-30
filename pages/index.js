@@ -1,8 +1,8 @@
 import Head from 'next/head'
 import { useState } from 'react';
 import { ApolloClient, InMemoryCache, gql } from "@apollo/client";
-import styles from '../styles/Home.module.css';
-import Product from '../components/Products';
+import Product from '../components/Products/Products';
+import Footer from '../components/Footer/Footer';
 import {
   Heading,
   Box,
@@ -72,9 +72,7 @@ export default function Home(results) {
           </form>
         <Product products={products} />
       </Box>
-      <footer className={styles.footer}>
-        This is a footer
-      </footer>
+      <Footer />
     </Flex>
   )
 }
