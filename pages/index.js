@@ -12,11 +12,13 @@ import {
   IconButton,
   useToast
 } from "@chakra-ui/react";
+import {SearchIcon, CloseIcon} from "@chakra-ui/icons"
 
 export default function Home(results) {
   const initialState = results;
-  const [characters, setCharacters] = useState(initialState.characters);
-  console.log(initialState)
+  const [products, setProducts] = useState(initialState.products);
+  const [search, setSearch] = useState("");
+  const toast = useToast();
   return (
     <Flex direction="column" justify="center" align="center">
       <Head>
@@ -27,7 +29,48 @@ export default function Home(results) {
         <Heading as="h1" size="2xl" mb={8}>
           No covid shopping spot
           </Heading>
-        <Product products={characters} />
+          <form onSubmit={async (e) => {
+            e.preventDefault();
+            const results = await fetch("/api/SearchProducts",{
+              method: "post",
+              body: search,
+            });
+            const { products, error} = await results.json();
+            if(error) {
+              toast({
+                position: "bottom",
+                title: "An error ocurred",
+                description: error, 
+                status: "error", 
+                duration: 5000, 
+                isClosable: true,
+              });
+            } else {
+              setProducts(products);
+            }
+          }}>
+            <Stack maxWidth="350px" width="100%" isInline mb={8}>
+              <Input placeholder="Search for a product" value={search} border="none" onChange={(e) => setSearch(e.target.value)}>
+              </Input>
+              <IconButton 
+              colorScheme="blue" 
+              aria-label="Search Database"
+              icon={<SearchIcon />}
+              disabled={search === ""}
+              type="submit" />
+
+              <IconButton colorScheme="red"
+              aria-label="Reset Button"
+              icon={<CloseIcon />}
+              disabled={search === ""}
+              onClick={async () => {
+                setSearch("");
+                setProducts(initialState.products);
+              }}/>
+              
+            </Stack>
+          </form>
+        <Product products={products} />
       </Box>
       <footer className={styles.footer}>
         This is a footer
@@ -70,7 +113,7 @@ export async function getStaticProps() {
 
   return {
     props: {
-      characters: data.characters.results,
+      products: data.characters.results,
     },
   }
 }
