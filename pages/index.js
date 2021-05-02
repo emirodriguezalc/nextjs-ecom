@@ -2,6 +2,7 @@ import Head from 'next/head'
 import { useState, useEffect } from 'react';
 import Product from '../components/Products/Products';
 import Footer from '../components/Footer/Footer';
+
 import {
   Heading,
   Box,
@@ -20,8 +21,8 @@ export default function Home() {
   const toast = useToast();
 
   useEffect(() => {
-    suggestedProducts();
-  }, [])
+    suggestedProducts(actualPage);
+  }, []);
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -29,7 +30,9 @@ export default function Home() {
       method: "post",
       body: search,
     });
+
     const { products, error } = await results.json();
+
     if (error) {
       toast({
         position: "bottom",
@@ -44,11 +47,12 @@ export default function Home() {
     }
   }
 
-  const suggestedProducts = async () => {
+  const suggestedProducts = async (actualPage) => {
     const results = await fetch("/api/GetProducts", {
       method: "post",
       body: actualPage,
     });
+
     const { products, error } = await results.json();
     if (error) {
       toast({
@@ -64,7 +68,16 @@ export default function Home() {
     }
   }
 
-
+  const handlePagination = (offset) => {
+    if (offset === "+") {
+      setActualPage(actualPage + 1);
+      suggestedProducts(actualPage + 1);
+    }
+    if (offset === "-") {
+      setActualPage(actualPage - 1);
+      suggestedProducts(actualPage - 1);
+    }
+  };
 
   return (
     <Flex direction="column" justify="center" align="center">
@@ -78,8 +91,13 @@ export default function Home() {
           </Heading>
         <form onSubmit={handleSearch}>
           <Stack maxWidth="350px" width="100%" isInline mb={8}>
-            <Input placeholder="Search for a product" value={search} border="none" onChange={(e) => setSearch(e.target.value)}>
-            </Input>
+            <Input
+              placeholder="Search for a product"
+              value={search}
+              border="none"
+              onChange={(e) => setSearch(e.target.value)}
+            />
+
             <IconButton
               colorScheme="blue"
               aria-label="Search Database"
@@ -87,7 +105,8 @@ export default function Home() {
               disabled={search === ""}
               type="submit" />
 
-            <IconButton colorScheme="red"
+            <IconButton 
+            colorScheme="red"
               aria-label="Reset Button"
               icon={<CloseIcon />}
               disabled={search === ""}
@@ -99,6 +118,13 @@ export default function Home() {
         </form>
         {products && <Product products={products} />}
       </Box>
+
+      <section className="pagination-wrapper">
+        <button onClick={() => handlePagination("-")}>{"<"}</button>
+        <span>{actualPage}</span>
+        <button onClick={() => handlePagination("+")}>{">"}</button>
+      </section>
+
       <Footer />
     </Flex>
   )

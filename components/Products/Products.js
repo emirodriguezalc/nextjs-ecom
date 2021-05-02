@@ -7,7 +7,6 @@ const Product = ({ products }) => {
         <SimpleGrid columns={[1, 2, 3]} spacing="40px">
             {
                 products.map((product) => {
-                    console.log(product)
                     return (
                         <div key={product.id}>
                             <Image src={product.image} width={300} height={300} />
