@@ -1,8 +1,9 @@
-import React from "react";
+import React from "react"
 import Head from 'next/head'
 import { useState, useEffect } from 'react';
 import Product from '../components/Products/Products';
 import Footer from '../components/Footer/Footer';
+
 import {
   Heading,
   Box,
@@ -26,7 +27,7 @@ export default function Home() {
 
   const handleSearch = async (e) => {
     e.preventDefault();
-    const results = await fetch("/api/SearchProducts", {
+    const results = await fetch("/api/SearchCharacters", {
       method: "post",
       body: search,
     });
@@ -48,8 +49,9 @@ export default function Home() {
   }
 
   const suggestedProducts = async (actualPage) => {
-    const results = await fetch("/api/GetProducts", {
-      method: "get",
+    const results = await fetch("/api/GetCharacters", {
+      method: "post",
+      body: actualPage,
     });
 
     const { products, error } = await results.json();
@@ -86,7 +88,7 @@ export default function Home() {
       </Head>
       <Box mb={4} flexDirection="column" justify="center" align="center" py={8}>
         <Heading as="h1" size="2xl" mb={8}>
-          No covid shopping spot
+          Covid Free shopping spot
           </Heading>
         <form onSubmit={handleSearch}>
           <Stack maxWidth="350px" width="100%" isInline mb={8}>
@@ -104,14 +106,14 @@ export default function Home() {
               disabled={search === ""}
               type="submit" />
 
-            <IconButton 
-            colorScheme="red"
+            <IconButton
+              colorScheme="red"
               aria-label="Reset Button"
               icon={<CloseIcon />}
               disabled={search === ""}
               onClick={async () => {
                 setSearch("");
-                suggestedProducts();
+                suggestedProducts(actualPage);
               }} />
           </Stack>
         </form>

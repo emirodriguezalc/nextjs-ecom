@@ -2,7 +2,7 @@
 import { ApolloClient, InMemoryCache, gql } from "@apollo/client";
 
 const client = new ApolloClient({
-  uri: "https://rickandmortyapi.com/graphql/",
+  uri: "https://localhost:4000/graphql/",
   cache: new InMemoryCache(),
 });
 
@@ -12,36 +12,21 @@ export default async (req, res) => {
     const { data } = await client.query({
       query: gql`
         query {
-          characters(filter: { name: "${search}" }) {
-            info {
-              count
-            }
-            results {
-              name
-              id
-              location {
-                name
-                id
-              }
-              image
-              origin {
-                name
-                id
-              }
-              episode {
-                id
-                episode
-                air_date
-              }
-            }
+          getProducts(filter: { name: "${search}" }) {
+            id
+            name
+            price
+            description
+            img
           }
         }
       `,
     });
-    res.status(200).json({ products: data.characters.results, error: null });
+    console.log(res.json(), 'lalal');
+    res.status(200).json({ products: data.getProducts, error: null });
   } catch (error) {
     if (error.message === "404: Not Found") {
-      res.status(404).json({ products: null, error: "No Characters found" });
+      res.status(404).json({ products: null, error: "No Products found" });
     } else {
       res
         .status(500)
