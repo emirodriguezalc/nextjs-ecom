@@ -1,8 +1,8 @@
+import React from "react";
 import Head from 'next/head'
 import { useState, useEffect } from 'react';
 import Product from '../components/Products/Products';
 import Footer from '../components/Footer/Footer';
-
 import {
   Heading,
   Box,
@@ -49,8 +49,7 @@ export default function Home() {
 
   const suggestedProducts = async (actualPage) => {
     const results = await fetch("/api/GetProducts", {
-      method: "post",
-      body: actualPage,
+      method: "get",
     });
 
     const { products, error } = await results.json();
